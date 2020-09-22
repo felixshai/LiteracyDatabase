@@ -4,6 +4,7 @@
 
 - 專案詳細計畫請見[零時小學校提案](https://sch001.g0v.tw/dash/prj/3VWQ8m06DW05jP09ve04J5dcB)
 - 專案[簡報](https://docs.google.com/presentation/d/1NlMxyBKezDG7n6wNAxTLNuW6LFskOgprZBn19OEisXs/edit?usp=sharing)
+- [Demo Website](http://172.104.114.192:5000/)
 
 ## 程式碼
 

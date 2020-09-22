@@ -6,7 +6,7 @@
 - 專案[簡報](https://docs.google.com/presentation/d/1NlMxyBKezDG7n6wNAxTLNuW6LFskOgprZBn19OEisXs/edit?usp=sharing)
 - [Demo Website](http://172.104.114.192:5000/)
 
-## 程式碼
+## 專案授權
 
 - 程式碼版權授權為 CC0 1.0 公眾領域貢獻宣告
 - 題庫依來源、產製方式有各自的授權，基本上在專案內部產出的題目也是授權為 CC0 1.0 公眾領域貢獻宣告

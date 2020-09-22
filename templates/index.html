@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-tw">
+<head>
+    <meta charset="utf-8">
+    <title>Sch001 Demo</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+    <br><br>
+    <div class="container">
+        <div class="row">
+            <div class="col alert alert-warning text-center" role="alert">
+                <h1 class="font-weight-bold">Demo 識字題庫 Literacy Practices Database</h1> 
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h2 class="font-weight-bold">題目、操作說明</h1>
+                <ul>
+                    <li>題目提供字與該字所造的例詞，受測者需從所給予的四個選項選出正確的讀音。</li>
+                    <li>可以點選「換一題」隨機抽選新的題目、對於題目的鑑別度給予評價。</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="container">
+        <div class="row">
+            <div class="col-8 alert-warning" role="alert">
+                <br>
+                <p class="h5" class="font-weight-bold" id="quiz">請問「」的「」讀音是下列哪個選項？</p>
+                <br>
+                <label class="radio-inline">
+                    <input type="radio" name="choices" id="option0" value="">
+                    <span class="h4" id="text0"></span>
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="choices" id="option1" value="">
+                    <span class="h4" id="text1"></span>
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="choices" id="option2" value="">
+                    <span class="h4" id="text2"></span>
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="choices" id="option3" value="">
+                    <span class="h4" id="text3"></span>
+                </label>
+                <input id="qid" value="" hidden>
+                <input id="solution" value="" hidden>
+                <br>
+                <br>
+                <div>    
+                    <p class="h5 outcome" id="outcome"></p>
+                </div>
+            </div>
+            <div class="col-4">
+                <button id="checkout" class="btn btn-warning">確認答案</button><br><br>
+                <button id="good" class="btn btn-warning">👍</button>&emsp;<button id="bad" class="btn btn-warning">👎</button>&emsp;<button id="confused" class="btn btn-warning">😵 題目有問題</button><br><br>
+                <button id="next" class="btn btn-warning">換一題</button>&emsp;<button class="btn btn-warning" id="check_json">查看原始資料</button>
+            </div>
+        </div>
+    </div>
+    <br><br>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+    function next_random_quiz(){
+        $.get("/bopomofo/", function(result){
+            result   = result["result"][0];
+            qid      = result["qid"];
+            sample   = result["sample"];
+            quiz     = result["quiz"];
+            solution = result["solution"];
+            options  = result["options"];
+            options  = JSON.parse(options)
+            $("#quiz").html("請問「"+sample+"」的「"+quiz+"」讀音是下列哪個選項？");
+            $("#qid").val(qid)
+            $("#solution").val(solution)
+            $("#option0").val(options[0])
+            $("#option1").val(options[1])
+            $("#option2").val(options[2])
+            $("#option3").val(options[3])
+            $("#text0").html(options[0])
+            $("#text1").html(options[1])
+            $("#text2").html(options[2])
+            $("#text3").html(options[3])
+        });
+    }
+
+    function doRating(feedback){
+        $("#good").prop("disabled",true)
+        $("#bad").prop("disabled",true)
+        $("#confused").prop("disabled",true)
+        $("#"+feedback).removeClass("btn-warning").addClass("btn-success");
+    }
+
+    $(function(){
+        next_random_quiz();
+    });
+
+    $("#next").click(function(){
+        next_random_quiz();
+        $("#outcome").html("")
+        $("#checkout").removeClass("btn-success").addClass("btn-warning").prop("disabled",false)
+        $("input[name='choices']").prop("disabled",false)
+        $("input[name='choices']:checked").prop("checked",false)
+        $("#good").removeClass("btn-success").addClass("btn-warning").prop("disabled",false);
+        $("#bad").removeClass("btn-success").addClass("btn-warning").prop("disabled",false);
+        $("#confused").removeClass("btn-success").addClass("btn-warning").prop("disabled",false);
+    });
+
+    $("#check_json").click(function(){
+        window.open('/bopomofo/'+$("#qid").val(),'_blank')
+    });
+
+    $("#checkout").click(function(){
+        checked  = $("input[name='choices']:checked").val();
+        solution = $("#solution").val();
+        if(checked == solution){
+            $("#outcome").html("⭕正確");
+        }else{
+            $("#outcome").html("❌錯誤 正確答案為 " + solution);
+        }
+        $("#checkout").removeClass("btn-warning").addClass("btn-success").prop("disabled",true)
+        $("input[name='choices']").prop("disabled",true)
+    });
+
+    $("#good").click(function(){doRating("good")}); 
+    $("#bad").click(function(){doRating("bad")}); 
+    $("#confused").click(function(){doRating("confused")});
+
+</script>
+</body>
+</html>
+<div class="container" hidden>
+    <div class="row">
+        <div class="col-8 alert-warning" role="alert">
+            <br>
+            <p class="h5" class="font-weight-bold">請問「萌發」的「萌」讀音是下列哪個選項？</p>
+            <br>
+            <label class="radio-inline h4"><input type="radio" name="choices" value="ㄆㄥˊ">ㄆㄥˊ</label>
+            <label class="radio-inline h4"><input type="radio" name="choices" value="ㄊㄨㄥˊ">ㄊㄨㄥˊ</label>
+            <label class="radio-inline h4"><input type="radio" name="choices" value="ㄇㄥˊ">ㄇㄥˊ</label>
+            <label class="radio-inline h4"><input type="radio" name="choices" value="ㄌㄨㄥˊ">ㄌㄨㄥˊ</label>
+            <br>
+            <p class="h5 outcome">❌錯誤 正確答案為 ㄇㄥˊ ⭕正確 </p>
+        </div>
+        <div class="col-4">
+            <button class="btn btn-warning">作答</button><br><br>
+            <button class="btn btn-warning">👍</button>&emsp;<button class="btn btn-warning">👎</button>&emsp;<button class="btn btn-warning">😵</button><br><br>
+            <button class="btn btn-warning">換一題</button>&emsp;<button class="btn btn-warning">查看原始資料</button>
+        </div>
+    </div>
+</div>

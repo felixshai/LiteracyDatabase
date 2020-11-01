@@ -13,5 +13,5 @@
 
 ## Web framework
 
-nginx + flask(python) + postgresql
+php-fpm + postgresql
 
